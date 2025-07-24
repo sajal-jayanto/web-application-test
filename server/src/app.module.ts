@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { MurmursModule } from './murmurs/murmurs.module';
 import { User } from './users/entities/user.entity';
+import { Murmur } from './murmurs/entities/murmur.entity';
 
 @Module({
   imports: [
@@ -16,10 +17,10 @@ import { User } from './users/entities/user.entity';
       username: 'docker',
       password: 'docker',
       database: 'test',
-      entities: [User],
+      entities: [User, Murmur],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Murmur]),
     UsersModule,
     MurmursModule,
   ],
