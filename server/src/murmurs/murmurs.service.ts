@@ -32,8 +32,13 @@ export class MurmursService {
     return await this.murmurRepository.save(createdMurmur);
   }
 
+  async likeMurmur(id: number) {
+    const murmur = await this.murmurRepository.findOneBy({ id });
+    return this.murmurRepository.update(id, { likeCount: murmur.likeCount + 1 });
+  }
+
   findAll() {
-    return `This action returns all murmurs`;
+    return this.murmurRepository.find();
   }
 
   findOne(id: number) {

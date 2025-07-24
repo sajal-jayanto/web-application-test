@@ -11,6 +11,11 @@ export class MurmursController {
     return this.murmursService.create(createMurmurDto);
   }
 
+  @Post('/like/:id')
+  likeMurmur(@Param('id') id: string) {
+    return this.murmursService.likeMurmur(+id);
+  }
+
   @Get()
   findAll() {
     return this.murmursService.findAll();
