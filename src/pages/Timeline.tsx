@@ -1,8 +1,26 @@
+import { useEffect, useState } from 'react'
 import { Layout } from '../components/Layout'
-import Murmur from '../components/Murmur'
+import MurmurCard from '../components/MurmurCard'
 import MurmurInput from '../components/MurmurInput'
+import { axios_client } from '../http/client/axios'
+import { MurmurType } from '../@types/types'
 
 const Timeline = () => {
+  const [murmurs, setMurmurs] = useState<MurmurType[]>([])
+
+  const fetchData = async () => {
+    const data = (await axios_client.get('/murmurs')) as MurmurType[]
+    setMurmurs(data)
+  }
+
+  useEffect(() => {
+    try {
+      fetchData()
+    } catch (error) {
+      console.log(error)
+    }
+  }, [])
+
   return (
     <Layout>
       <div className="text-center py-6">
@@ -13,10 +31,10 @@ const Timeline = () => {
           Discover what everyone is murmuring about
         </p>
       </div>
-      <MurmurInput />
-      <Murmur />
-      <Murmur />
-      <Murmur />
+      <MurmurInput onCreate={fetchData} />
+      {murmurs.map((murmur) => (
+        <MurmurCard key={murmur.id} murmur={murmur} onLike={fetchData} />
+      ))}
     </Layout>
   )
 }

@@ -32,6 +32,13 @@ export class MurmursService {
     return await this.murmurRepository.save(createdMurmur);
   }
 
+  findAll() {
+    return this.murmurRepository.find({
+      relations: ['author'],
+      order: { createdAt: 'DESC' }
+    });
+  }
+
   async likeMurmur(murmurId: number) {
     const murmur = await this.murmurRepository.findOneBy({ id: murmurId });
     return this.murmurRepository.update(murmurId, { likeCount: murmur.likeCount + 1 });
@@ -53,7 +60,10 @@ export class MurmursService {
 
 
   findOne(murmurId: number) {
-    return this.murmurRepository.findOneBy({ id: murmurId });
+    return this.murmurRepository.findOne({
+      where: { id: murmurId },
+      relations: ['author'],
+    });
   }
 
   async remove(murmurId: number) {
