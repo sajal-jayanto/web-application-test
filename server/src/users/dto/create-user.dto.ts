@@ -19,4 +19,5 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsNumber()
   public age: number;
+
 }

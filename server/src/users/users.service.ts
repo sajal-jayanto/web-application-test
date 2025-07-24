@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FollowUserDto } from './dto/follow-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -24,5 +25,29 @@ export class UsersService {
     });
     if (!user) throw new NotFoundException('User not found');
     return user;
+  }
+
+  async followUser(followUserDto: FollowUserDto) {
+    // first user is the login user when making friends 
+    // we can get that form Auth token after implementing a auth-gard
+    const currentUser = await this.userRepository.findOne({
+      where: { id: 1 },
+      relations: ['friends']
+    }) as any
+
+
+    const { userId } = followUserDto;
+    const isFriendBefore = currentUser.friends.find(user => user.id === userId)
+    /// can't be friend with his own 
+    /// also they are all ready friend.
+    if (isFriendBefore || userId === 1) {
+      throw new BadRequestException('Sorry they are all ready friends.');
+    }
+
+    const friend = await this.userRepository.findOneBy({ id: userId });
+    if (!friend) throw new NotFoundException('User not found');
+
+    currentUser.friends.push(friend);
+    return this.userRepository.save(currentUser);;
   }
 }

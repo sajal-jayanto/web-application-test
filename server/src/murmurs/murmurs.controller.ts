@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MurmursService } from './murmurs.service';
 import { CreateMurmurDto } from './dto/create-murmur.dto';
 
@@ -11,23 +11,23 @@ export class MurmursController {
     return this.murmursService.create(createMurmurDto);
   }
 
-  @Post('/like/:id')
-  likeMurmur(@Param('id') id: string) {
-    return this.murmursService.likeMurmur(+id);
+  @Post('/like')
+  likeMurmur(@Query('murmurId') murmurId: string) {
+    return this.murmursService.likeMurmur(+murmurId);
+  }
+
+  @Get('/my')
+  findAllByUser(@Query('userId') userId: number, @Query('page') page = 1, @Query('limit') limit = 10) {
+    return this.murmursService.findAllByUser(+userId, +page, +limit);
   }
 
   @Get()
-  findAll() {
-    return this.murmursService.findAll();
+  findOne(@Query('murmurId') murmurId: string) {
+    return this.murmursService.findOne(+murmurId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.murmursService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.murmursService.remove(+id);
+  @Delete('')
+  remove(@Query('murmurId') murmur: string,) {
+    return this.murmursService.remove(+murmur);
   }
 }

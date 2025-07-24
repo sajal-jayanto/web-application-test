@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateMurmurDto } from './dto/create-murmur.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Murmur } from './entities/murmur.entity';
@@ -17,7 +17,7 @@ export class MurmursService {
 
 
   async create(createMurmurDto: CreateMurmurDto) {
-    // first user is the default user when create murmur 
+    // first user is the login user when create murmur 
     // we can get that form Auth token after implementing a auth-gard
     const user = await this.userRepository.findOneBy({ id: 1 });
 
@@ -32,20 +32,39 @@ export class MurmursService {
     return await this.murmurRepository.save(createdMurmur);
   }
 
-  async likeMurmur(id: number) {
-    const murmur = await this.murmurRepository.findOneBy({ id });
-    return this.murmurRepository.update(id, { likeCount: murmur.likeCount + 1 });
+  async likeMurmur(murmurId: number) {
+    const murmur = await this.murmurRepository.findOneBy({ id: murmurId });
+    return this.murmurRepository.update(murmurId, { likeCount: murmur.likeCount + 1 });
   }
 
-  findAll() {
-    return this.murmurRepository.find();
+  findAllByUser(userId: number, page = 1, limit = 10) {
+    return this.murmurRepository.find({
+      where: { author: { id: userId } },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} murmur`;
+  findOne(murmurId: number) {
+    return this.murmurRepository.findOneBy({ id: murmurId });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} murmur`;
+  async remove(murmurId: number) {
+    // first user is the login user when create murmur 
+    // we can get that form Auth token after implementing a auth-gard
+    const user = await this.userRepository.findOneBy({ id: 1 });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const murmur = await this.murmurRepository.findOneBy({ id: murmurId });
+    if (!murmur) {
+      throw new NotFoundException('Murmur not found');
+    }
+    if (murmur.id !== user.id) {
+      throw new UnauthorizedException('You are not authorized to delete the murmur');
+    }
+
+    return this.murmurRepository.delete(murmurId);
   }
 }
