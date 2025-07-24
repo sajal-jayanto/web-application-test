@@ -11,6 +11,11 @@ export class MurmursController {
     return this.murmursService.create(createMurmurDto);
   }
 
+  @Get()
+  findAll() {
+    return this.murmursService.findAll();
+  }
+
   @Post('/like')
   likeMurmur(@Query('murmurId') murmurId: string) {
     return this.murmursService.likeMurmur(+murmurId);
@@ -21,12 +26,12 @@ export class MurmursController {
     return this.murmursService.findAllByUser(+userId, +page, +limit);
   }
 
-  @Get()
+  @Get('/find')
   findOne(@Query('murmurId') murmurId: string) {
     return this.murmursService.findOne(+murmurId);
   }
 
-  @Delete('')
+  @Delete()
   remove(@Query('murmurId') murmur: string,) {
     return this.murmursService.remove(+murmur);
   }

@@ -32,22 +32,38 @@ export class MurmursService {
     return await this.murmurRepository.save(createdMurmur);
   }
 
+  findAll() {
+    return this.murmurRepository.find({
+      relations: ['author'],
+      order: { createdAt: 'DESC' }
+    });
+  }
+
   async likeMurmur(murmurId: number) {
     const murmur = await this.murmurRepository.findOneBy({ id: murmurId });
     return this.murmurRepository.update(murmurId, { likeCount: murmur.likeCount + 1 });
   }
 
-  findAllByUser(userId: number, page = 1, limit = 10) {
-    return this.murmurRepository.find({
+  async findAllByUser(userId: number, page = 1, limit = 10) {
+    const [data, total] = await this.murmurRepository.findAndCount({
       where: { author: { id: userId } },
       relations: ['author'],
       take: limit,
-      skip: (page - 1) * limit,
+      skip: (page - 1) * limit
     });
+
+    return {
+      murmur: data,
+      totalCount: total,
+    };
   }
 
+
   findOne(murmurId: number) {
-    return this.murmurRepository.findOneBy({ id: murmurId });
+    return this.murmurRepository.findOne({
+      where: { id: murmurId },
+      relations: ['author'],
+    });
   }
 
   async remove(murmurId: number) {

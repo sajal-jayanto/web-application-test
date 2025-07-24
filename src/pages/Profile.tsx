@@ -1,6 +1,6 @@
 import { Layout } from '../components/Layout'
 import { AiOutlineLike } from 'react-icons/ai'
-import Murmur from '../components/Murmur'
+import MurmurCard from '../components/MurmurCard'
 
 const mockUser = {
   id: 1,
@@ -58,9 +58,9 @@ const Profile = () => {
         <p className="text-lg font-bold mb-4 border-b border-gray-300">
           Your Murmur
         </p>
-        <Murmur />
-        <Murmur />
-        <Murmur />
+        {/* <MurmurCard />
+        <MurmurCard />
+        <MurmurCard /> */}
       </div>
     </Layout>
   )

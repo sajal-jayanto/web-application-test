@@ -1,9 +1,16 @@
 import { useState } from 'react'
+import { axios_client } from '../http/client/axios'
 
-const MurmurInput = () => {
+const MurmurInput = ({ onCreate }: { onCreate: () => void }) => {
   const [content, setContent] = useState('')
-  const handlePost = () => {
+  const handlePost = async () => {
     if (!content.trim()) return
+    try {
+      const data = (await axios_client.post(`/murmurs`, { content })) as any
+      if (data.id) onCreate()
+    } catch (error) {
+      console.log(error)
+    }
     setContent('')
   }
 
