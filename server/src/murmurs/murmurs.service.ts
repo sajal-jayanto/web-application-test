@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMurmurDto } from './dto/create-murmur.dto';
-import { UpdateMurmurDto } from './dto/update-murmur.dto';
 
 @Injectable()
 export class MurmursService {
@@ -14,10 +13,6 @@ export class MurmursService {
 
   findOne(id: number) {
     return `This action returns a #${id} murmur`;
-  }
-
-  update(id: number, updateMurmurDto: UpdateMurmurDto) {
-    return `This action updates a #${id} murmur`;
   }
 
   remove(id: number) {

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -10,7 +10,7 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
-  @Column()
+  @Column({ select: false })
   password!: string;
 
   @Column({ type: 'enum', enum: ['male', 'female', 'other'], nullable: true })
@@ -21,4 +21,8 @@ export class User {
 
   @Column({ default: false })
   isActive!: boolean;
+
+  @ManyToMany(() => User, (user) => user.friends)
+  @JoinTable()
+  friends!: User[];
 }

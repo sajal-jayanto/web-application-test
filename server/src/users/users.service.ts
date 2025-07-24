@@ -18,7 +18,10 @@ export class UsersService {
 
   async findOne(id: number) {
     if (isNaN(id)) throw new NotFoundException('Invalid User ID');
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['friends']
+    });
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
