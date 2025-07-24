@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
-import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FollowUserDto } from './dto/follow-user.dto';
+import { User } from './entities/user.entity';
+
 
 @Injectable()
 export class UsersService {
@@ -46,6 +47,7 @@ export class UsersService {
 
     const friend = await this.userRepository.findOneBy({ id: userId });
     if (!friend) throw new NotFoundException('User not found');
+    await this.userRepository.update(friend.id, { followerCount: friend.followerCount + 1 });
 
     currentUser.friends.push(friend);
     return this.userRepository.save(currentUser);;

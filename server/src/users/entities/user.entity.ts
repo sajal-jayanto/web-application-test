@@ -14,11 +14,14 @@ export class User {
   @Column({ select: false })
   password!: string;
 
-  @Column({ type: 'enum', enum: ['male', 'female', 'other'], nullable: true })
-  gender!: 'male' | 'female' | 'other';
+  @Column({})
+  gender!: string;
 
   @Column()
   age!: number;
+
+  @Column({ default: 0 })
+  followerCount!: number;
 
   @Column({ default: false })
   isActive!: boolean;

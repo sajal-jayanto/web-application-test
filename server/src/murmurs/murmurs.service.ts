@@ -3,7 +3,7 @@ import { CreateMurmurDto } from './dto/create-murmur.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Murmur } from './entities/murmur.entity';
 import { Repository } from 'typeorm';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class MurmursService {
@@ -40,6 +40,7 @@ export class MurmursService {
   findAllByUser(userId: number, page = 1, limit = 10) {
     return this.murmurRepository.find({
       where: { author: { id: userId } },
+      relations: ['author'],
       take: limit,
       skip: (page - 1) * limit,
     });
@@ -56,7 +57,6 @@ export class MurmursService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
     const murmur = await this.murmurRepository.findOneBy({ id: murmurId });
     if (!murmur) {
       throw new NotFoundException('Murmur not found');
