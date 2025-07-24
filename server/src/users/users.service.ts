@@ -24,6 +24,7 @@ export class UsersService {
       where: { id },
       relations: ['friends']
     });
+    console.log(user)
     if (!user) throw new NotFoundException('User not found');
     return user;
   }

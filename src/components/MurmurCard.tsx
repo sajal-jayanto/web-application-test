@@ -9,7 +9,7 @@ const MurmurCard = ({
   onLike,
 }: {
   murmur: MurmurType
-  onLike: () => void
+  onLike?: () => void
 }) => {
   const navigate = useNavigate()
 
@@ -18,7 +18,7 @@ const MurmurCard = ({
       const data = (await axios_client.post(
         `/murmurs/like?murmurId=${murmur.id}`,
       )) as any
-      if (data.affected >= 1) onLike()
+      if (onLike && data.affected >= 1) onLike()
     } catch (error) {
       console.log(error)
     }

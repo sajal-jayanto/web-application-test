@@ -49,7 +49,8 @@ export class MurmursService {
       where: { author: { id: userId } },
       relations: ['author'],
       take: limit,
-      skip: (page - 1) * limit
+      skip: (page - 1) * limit,
+      order: { createdAt: 'DESC' }
     });
 
     return {
