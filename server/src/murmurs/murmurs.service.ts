@@ -17,7 +17,8 @@ export class MurmursService {
 
 
   async create(createMurmurDto: CreateMurmurDto) {
-    // first user is the default user when create murmur
+    // first user is the default user when create murmur 
+    // we can get that form Auth token after implementing a auth-gard
     const user = await this.userRepository.findOneBy({ id: 1 });
 
     const { content } = createMurmurDto
