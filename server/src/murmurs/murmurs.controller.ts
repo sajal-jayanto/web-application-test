@@ -26,7 +26,7 @@ export class MurmursController {
     return this.murmursService.findOne(+murmurId);
   }
 
-  @Delete('')
+  @Delete()
   remove(@Query('murmurId') murmur: string,) {
     return this.murmursService.remove(+murmur);
   }
