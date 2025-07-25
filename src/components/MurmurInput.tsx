@@ -9,7 +9,7 @@ const MurmurInput = ({ invalidateKey }: { invalidateKey: string }) => {
   const { mutate: postMurmur } = useMutation({
     mutationFn: (content: string) => createMurmur(content),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [invalidateKey] })
+      queryClient.invalidateQueries({ queryKey: [invalidateKey, 1] })
       setContent('')
     },
     onError: (error) => {
