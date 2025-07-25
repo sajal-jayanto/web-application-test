@@ -6,6 +6,7 @@ export type UserType = {
   age: number;
   followerCount: number;
   isActive: boolean;
+  friends?: UserType[]
 };
 
 export type MurmurType = {
