@@ -12,8 +12,8 @@ export class MurmursController {
   }
 
   @Get()
-  findAll() {
-    return this.murmursService.findAll();
+  findAll(@Query('page') page = 1) {
+    return this.murmursService.findAll(page);
   }
 
   @Post('/like')

@@ -3,11 +3,15 @@ import MurmurCard from '../components/MurmurCard'
 import MurmurInput from '../components/MurmurInput'
 import { useQuery } from '@tanstack/react-query'
 import { fetchAllMurmurs } from '../http/services/Murmur'
+import Pagination from '../components/Pagination'
+import { useState } from 'react'
 
 const Timeline = () => {
-  const { data: murmurs } = useQuery({
-    queryKey: ['fetch-all-murmurs'],
-    queryFn: () => fetchAllMurmurs(),
+  const [selectedPage, setSelectedPage] = useState(1)
+
+  const { data: murmursData } = useQuery({
+    queryKey: ['fetch-all-murmurs', selectedPage],
+    queryFn: () => fetchAllMurmurs(selectedPage),
   })
 
   return (
@@ -21,13 +25,18 @@ const Timeline = () => {
         </p>
       </div>
       <MurmurInput invalidateKey="fetch-all-murmurs" />
-      {murmurs?.map((murmur) => (
+      {murmursData?.murmurs?.map((murmur) => (
         <MurmurCard
           key={murmur.id}
           murmur={murmur}
           invalidateKey="fetch-all-murmurs"
         />
       ))}
+      <Pagination
+        totalItem={murmursData?.totalCount || 1}
+        currentPage={selectedPage}
+        onPageChange={setSelectedPage}
+      />
     </Layout>
   )
 }

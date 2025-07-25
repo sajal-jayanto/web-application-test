@@ -1,8 +1,8 @@
 import { MurmurType } from "../../@types/types"
 import { axios_client } from "../client/axios"
 
-export const fetchMurmursByUserId = async (userId) => {
-  const data = (await axios_client.get(`/murmurs/my?userId=${userId}`)) as {
+export const fetchMurmursByUserId = async (userId, page) => {
+  const data = (await axios_client.get(`/murmurs/my?userId=${userId}&page=${page}`)) as {
     totalCount: number
     murmur: MurmurType[]
   }
@@ -14,8 +14,11 @@ export const fetchMurmursById = async (id) => {
   return data;
 }
 
-export const fetchAllMurmurs = async () => {
-  const data = (await axios_client.get('/murmurs')) as MurmurType[]
+export const fetchAllMurmurs = async (page: number) => {
+  const data = (await axios_client.get(`/murmurs?page=${page}`)) as {
+    totalCount: number;
+    murmurs: MurmurType[]
+  }
   return data;
 }
 

@@ -1,21 +1,22 @@
 import { Layout } from '../components/Layout'
 import { AiOutlineUserAdd } from 'react-icons/ai'
 import MurmurCard from '../components/MurmurCard'
-import { axios_client } from '../http/client/axios'
 import { useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchUser, followUser } from '../http/services/user'
 import { fetchMurmursByUserId } from '../http/services/Murmur'
 import { useEffect, useState } from 'react'
+import Pagination from '../components/Pagination'
 
 const Profile = () => {
+  const [selectedPage, setSelectedPage] = useState(1)
   const { id } = useParams()
   const queryClient = useQueryClient()
   const [isFriend, setIsFriend] = useState<boolean | null>(null)
 
   const { data: murmursData } = useQuery({
-    queryKey: ['fetch-murmurs-by-userId'],
-    queryFn: () => fetchMurmursByUserId(id),
+    queryKey: ['fetch-murmurs-by-userId', selectedPage],
+    queryFn: () => fetchMurmursByUserId(id, selectedPage),
   })
 
   const { data: userProfile } = useQuery({
@@ -109,6 +110,11 @@ const Profile = () => {
             invalidateKey="fetch-murmurs-by-userId"
           />
         ))}
+        <Pagination
+          totalItem={murmursData?.totalCount || 1}
+          currentPage={selectedPage}
+          onPageChange={setSelectedPage}
+        />
       </div>
     </Layout>
   )

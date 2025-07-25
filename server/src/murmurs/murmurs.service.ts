@@ -32,11 +32,18 @@ export class MurmursService {
     return await this.murmurRepository.save(createdMurmur);
   }
 
-  findAll() {
-    return this.murmurRepository.find({
+  async findAll(page = 1, limit = 10) {
+    const [data, total] = await this.murmurRepository.findAndCount({
       relations: ['author'],
+      take: limit,
+      skip: (page - 1) * limit,
       order: { createdAt: 'DESC' }
     });
+
+    return {
+      murmurs: data,
+      totalCount: total,
+    }
   }
 
   async likeMurmur(murmurId: number) {

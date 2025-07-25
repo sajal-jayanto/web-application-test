@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { axios_client } from '../http/client/axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createMurmur } from '../http/services/Murmur'
 
