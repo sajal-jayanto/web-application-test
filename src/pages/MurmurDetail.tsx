@@ -1,43 +1,32 @@
 import { AiOutlineLike } from 'react-icons/ai'
 import { Layout } from '../components/Layout'
 import { FaArrowLeft } from 'react-icons/fa'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { MurmurType } from '../@types/types'
-import { useEffect, useState } from 'react'
-import { axios_client } from '../http/client/axios'
+import { useNavigate, useParams } from 'react-router-dom'
 import { getTimeAgo } from '../utils/util'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { fetchMurmursById, likeMurmurById } from '../http/services/Murmur'
 
 const MurmurDetail = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { id } = useParams()
 
-  const [murmur, setMurmur] = useState<MurmurType>()
+  const { data: murmur } = useQuery({
+    queryKey: ['fetch-murmur-by-id'],
+    queryFn: () => fetchMurmursById(id),
+  })
 
-  const fetchData = async () => {
-    const data = (await axios_client.get(
-      `/murmurs/find?murmurId=${id}`,
-    )) as MurmurType
-    setMurmur(data)
-  }
+  const { mutate: likeMurmur } = useMutation({
+    mutationFn: (murmurId: number) => likeMurmurById(murmurId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fetch-murmur-by-id'] })
+    },
+    onError: (error) => {
+      console.error('Error posting murmur:', error)
+    },
+  })
 
-  useEffect(() => {
-    try {
-      fetchData()
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
-
-  const onLikeTheMurmur = async () => {
-    try {
-      const data = (await axios_client.post(
-        `/murmurs/like?murmurId=${murmur?.id}`,
-      )) as any
-      if (data.affected >= 1) fetchData()
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const onLikeTheMurmur = () => likeMurmur(Number(id))
 
   return (
     <Layout>

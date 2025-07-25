@@ -2,27 +2,30 @@ import { AiOutlineLike } from 'react-icons/ai'
 import { useNavigate } from 'react-router-dom'
 import { MurmurType } from '../@types/types'
 import { getTimeAgo, truncateText } from '../utils/util'
-import { axios_client } from '../http/client/axios'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { likeMurmurById } from '../http/services/Murmur'
 
 const MurmurCard = ({
   murmur,
-  onLike,
+  invalidateKey,
 }: {
   murmur: MurmurType
-  onLike?: () => void
+  invalidateKey: string
 }) => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
-  const onLikeTheMurmur = async () => {
-    try {
-      const data = (await axios_client.post(
-        `/murmurs/like?murmurId=${murmur.id}`,
-      )) as any
-      if (onLike && data.affected >= 1) onLike()
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const { mutate: likeMurmur } = useMutation({
+    mutationFn: (murmurId: number) => likeMurmurById(murmurId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [invalidateKey] })
+    },
+    onError: (error) => {
+      console.error('Error posting murmur:', error)
+    },
+  })
+
+  const onLikeTheMurmur = () => likeMurmur(murmur.id)
 
   return (
     <div className="w-full p-4 bg-white rounded-xl shadow h-auto flex flex-col justify-between border border-gray-300 mb-5">

@@ -1,25 +1,14 @@
-import { useEffect, useState } from 'react'
 import { Layout } from '../components/Layout'
 import MurmurCard from '../components/MurmurCard'
 import MurmurInput from '../components/MurmurInput'
-import { axios_client } from '../http/client/axios'
-import { MurmurType } from '../@types/types'
+import { useQuery } from '@tanstack/react-query'
+import { fetchAllMurmurs } from '../http/services/Murmur'
 
 const Timeline = () => {
-  const [murmurs, setMurmurs] = useState<MurmurType[]>([])
-
-  const fetchData = async () => {
-    const data = (await axios_client.get('/murmurs')) as MurmurType[]
-    setMurmurs(data)
-  }
-
-  useEffect(() => {
-    try {
-      fetchData()
-    } catch (error) {
-      console.log(error)
-    }
-  }, [])
+  const { data: murmurs } = useQuery({
+    queryKey: ['fetch-all-murmurs'],
+    queryFn: () => fetchAllMurmurs(),
+  })
 
   return (
     <Layout>
@@ -31,9 +20,13 @@ const Timeline = () => {
           Discover what everyone is murmuring about
         </p>
       </div>
-      <MurmurInput onCreate={fetchData} />
-      {murmurs.map((murmur) => (
-        <MurmurCard key={murmur.id} murmur={murmur} onLike={fetchData} />
+      <MurmurInput invalidateKey="fetch-all-murmurs" />
+      {murmurs?.map((murmur) => (
+        <MurmurCard
+          key={murmur.id}
+          murmur={murmur}
+          invalidateKey="fetch-all-murmurs"
+        />
       ))}
     </Layout>
   )
